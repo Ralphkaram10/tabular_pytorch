@@ -15,6 +15,7 @@ def main():
         config = yaml.safe_load(f)
     train_model(config)
 
+
 def train_model(config):
     """
     Trains the model
@@ -22,22 +23,29 @@ def train_model(config):
     # load data
     train_val_test_data_dict = load_train_val_test_data(config)
     # Initialize model and optimizer
-    init_input_dict = {'X': train_val_test_data_dict['X_train'], 'y': train_val_test_data_dict['y_train']}
+    init_input_dict = {
+        'X': train_val_test_data_dict['X_train'],
+        'y': train_val_test_data_dict['y_train']
+    }
     init_output_dict = init(init_input_dict)
     # Training loop
-    pbar=tqdm(range(config["num_epochs"]))
+    pbar = tqdm(range(config["num_epochs"]))
     for epoch in pbar:
         pbar.set_description('training')
-        train_one_epoch_input_dict={**init_output_dict,
-                                    'train_loader':train_val_test_data_dict['train_loader']
-                                    }
-        train_one_epoch_output_dict=train_one_epoch(train_one_epoch_input_dict)
-        eval_one_epoch_input_dict={**train_one_epoch_output_dict,
-                                    'val_loader':train_val_test_data_dict['val_loader']
-                                    }
-        eval_one_epoch_output_dict=eval_one_epoch(eval_one_epoch_input_dict)
+        train_one_epoch_input_dict = {
+            **init_output_dict, 'train_loader':
+            train_val_test_data_dict['train_loader']
+        }
+        train_one_epoch_output_dict = train_one_epoch(
+            train_one_epoch_input_dict)
+        eval_one_epoch_input_dict = {
+            **train_one_epoch_output_dict, 'val_loader':
+            train_val_test_data_dict['val_loader']
+        }
+        eval_one_epoch_output_dict = eval_one_epoch(eval_one_epoch_input_dict)
         print(
-            f"Epoch [{epoch+1}/{config['num_epochs']}] - loss: {train_one_epoch_output_dict['train_loss']:.4f} - val_loss: {eval_one_epoch_output_dict['val_loss']:.4f}")
+            f"Epoch [{epoch+1}/{config['num_epochs']}] - loss: {train_one_epoch_output_dict['train_loss']:.4f} - val_loss: {eval_one_epoch_output_dict['val_loss']:.4f}"
+        )
     # Save trained model (optional)
     torch.save(init_output_dict['model'].state_dict(), config['model_path'])
 
@@ -52,7 +60,7 @@ def init(init_input_dict):
     output_size = y.shape[1]
     model = SimpleMlp(input_size, output_size)
     init_output_dict = {
-        'model':model,
+        'model': model,
         'optimizer': optim.Adam(model.parameters(), lr=0.001),
         'criterion': nn.MSELoss(),
     }
@@ -61,15 +69,18 @@ def init(init_input_dict):
 
 def load_train_val_test_data(config):
     # Load data using the custom dataset
-    train_dataset = CustomDataset(
-        input_table_path=config["train_input_table_path"],
-        target_table_path=config["train_target_table_path"])
-    val_dataset = CustomDataset(
-        input_table_path=config["val_input_table_path"],
-        target_table_path=config["val_target_table_path"])
-    test_dataset = CustomDataset(
-        input_table_path=config["test_input_table_path"],
-        target_table_path=config["test_target_table_path"])
+    train_dataset = CustomDataset({
+        'table_path': config["train_table_path"],
+        'phase': "train"
+    })
+    val_dataset = CustomDataset({
+        'table_path': config["val_table_path"],
+        'phase': "val"
+    })
+    test_dataset = CustomDataset({
+        'table_path': config["test_table_path"],
+        'phase': "test"
+    })
 
     X_train = train_dataset.X_df.to_numpy()
     X_val = val_dataset.X_df.to_numpy()
@@ -86,9 +97,8 @@ def load_train_val_test_data(config):
                             batch_size=config['batch_size'],
                             shuffle=config['shuffle'])
     test_loader = DataLoader(test_dataset,
-                            batch_size=config['batch_size'],
-                            shuffle=config['shuffle'])
-
+                             batch_size=config['batch_size'],
+                             shuffle=config['shuffle'])
 
     output_dict = {
         "train_dataset": train_dataset,
@@ -109,7 +119,7 @@ def load_train_val_test_data(config):
 
 def train_one_epoch(input_dict):
     input_dict['model'].train()
-    total_loss= 0
+    total_loss = 0
     for batch_X, batch_y in input_dict["train_loader"]:
         input_dict['optimizer'].zero_grad()
         pred_y = input_dict['model'](batch_X)
@@ -118,21 +128,26 @@ def train_one_epoch(input_dict):
         loss.backward()
         input_dict['optimizer'].step()
     train_loss = total_loss / len(input_dict["train_loader"])
-    output_dict={'train_loss':train_loss,'model':input_dict['model'],'criterion':input_dict['criterion']}
+    output_dict = {
+        'train_loss': train_loss,
+        'model': input_dict['model'],
+        'criterion': input_dict['criterion']
+    }
     return output_dict
 
 
 def eval_one_epoch(input_dict):
     input_dict['model'].eval()
-    total_val_loss= 0
+    total_val_loss = 0
     with torch.no_grad():
         for batch_X, batch_y in input_dict["val_loader"]:
             pred_y = input_dict['model'](batch_X)
             loss = input_dict['criterion'](pred_y, batch_y)
             total_val_loss += loss.item()
         val_loss = total_val_loss / len(input_dict["val_loader"])
-    output_dict={'val_loss':val_loss,'model':input_dict['model']}
+    output_dict = {'val_loss': val_loss, 'model': input_dict['model']}
     return output_dict
+
 
 if __name__ == "__main__":
     main()

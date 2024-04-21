@@ -1,9 +1,6 @@
-train_input_table_path: "data/auction+verification/inputs/train_inputs.csv"
-val_input_table_path: "data/auction+verification/inputs/val_inputs.csv"
-test_input_table_path: "data/auction+verification/inputs/test_inputs.csv"
-train_target_table_path: "data/auction+verification/targets/train_targets.csv"
-val_target_table_path: "data/auction+verification/targets/val_targets.csv"
-test_target_table_path: "data/auction+verification/targets/test_targets.csv"
+train_table_path: "data/auction+verification/train_data.csv"
+val_table_path: "data/auction+verification/val_data.csv"
+test_table_path: "data/auction+verification/test_data.csv"
 model_path: "output/model.pth"
 num_epochs: 100
 batch_size: 32

@@ -1,5 +1,4 @@
-test_input_table_path: "data/auction+verification/inputs/test_inputs.csv"
-test_target_table_path: "data/auction+verification/targets/test_targets.csv"
+test_table_path: "data/auction+verification/test_data.csv"
 model_path: "output/model.pth"
 batch_size: 16
 shuffle: False

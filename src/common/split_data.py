@@ -38,10 +38,8 @@ def split_dataframe(df,
 
 
 if __name__ == "__main__":
-    #tabular_data_path = 'data/auction+verification/inputs/inputs.csv'
-    tabular_data_path = 'data/auction+verification/targets/targets.csv'
-    #output_dir_path = 'data/auction+verification/inputs'
-    output_dir_path = 'data/auction+verification/targets'
+    tabular_data_path = 'data/auction+verification/data.csv'
+    output_dir_path = 'data/auction+verification/'
     train_percent = 80
     val_percent = 10
     test_percent = 10
