@@ -3,6 +3,7 @@ import torch
 import yaml
 import torch.nn as nn
 import pandas as pd
+from sklearn.metrics import r2_score, mean_squared_error
 from src.dataloader.dataloader import CustomDataset, load_test_data  # Assuming dataloader.py is in the correct directory
 from torch.utils.data import DataLoader
 from src.models.models import SimpleMlp
@@ -24,20 +25,26 @@ def main():
         load_trained_model_input_dict)
     # evaluate model
     pkl_dict = load_pickle()
+    criterions_dict= {'mse':mean_squared_error, 'r2':r2_score}
     eval_input_dict = {
         'test_loader': test_data_dict['test_loader'],
         'model': load_trained_model_output_dict['model'],
-        'criterion': nn.MSELoss(),
         'input_scaler': pkl_dict['input_scaler'],
         'target_scaler': pkl_dict['target_scaler']
     }
     eval_output_dict = eval(eval_input_dict)
     print(eval_output_dict)
 
+def compute_metrics_per_batch(input_dict):
+    mse=mean_squared_error(input_dict['batch_y'],input_dict['batch_y_pred'])
+    r2=r2_score(input_dict['batch_y'],input_dict['batch_y_pred'])
+    return {'mse':mse, 'r2':r2}
+
 
 def eval(input_dict):
     input_dict['model'].eval()
     total_test_loss = 0
+    total_metrics={'mse':0, 'r2':0}
     with torch.no_grad():
         for batch_X, batch_y in input_dict["test_loader"]:
             batch_X = batch_X.reshape((batch_X.shape[0],batch_X.shape[2]))
@@ -48,11 +55,13 @@ def eval(input_dict):
             pred_y = input_dict['model'](input_tensor)
             pred_y_original = input_dict[
                 'target_scaler'].inverse_transform(pred_y)
-            loss = input_dict['criterion'](pred_y, batch_y)
-            total_test_loss += loss.item()
-        test_loss = total_test_loss / len(input_dict["test_loader"])
-    output_dict = {'test_loss': test_loss}
-    return output_dict
+            metrics_input_dict={'batch_y_pred':pred_y, 'batch_y':batch_y}
+            metrics_dict= compute_metrics_per_batch(metrics_input_dict)
+            for k in metrics_dict.keys():
+                total_metrics[k]+=metrics_dict[k]
+        for k in metrics_dict.keys():
+            total_metrics[k] = total_metrics[k] / len(input_dict["test_loader"])
+    return total_metrics
 
 
 if __name__ == "__main__":
