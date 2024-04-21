@@ -3,11 +3,12 @@ import yaml
 import numpy as np
 import torch.nn as nn
 import torch.optim as optim
+from tqdm import tqdm
+from matplotlib import pyplot as plt
 from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from src.dataloader.dataloader import CustomDataset
 from src.models.models import SimpleMlp
-from tqdm import tqdm
 
 
 def main():
@@ -30,6 +31,7 @@ def train_model(config):
     init_output_dict = init(init_input_dict)
     # Training loop
     pbar = tqdm(range(config["num_epochs"]))
+    train_val_logger=TrainValLogger()
     for epoch in pbar:
         pbar.set_description('training')
         train_one_epoch_input_dict = {
@@ -43,9 +45,12 @@ def train_model(config):
             train_val_test_data_dict['val_loader']
         }
         eval_one_epoch_output_dict = eval_one_epoch(eval_one_epoch_input_dict)
+        one_epoch_dict={**train_one_epoch_output_dict,**eval_one_epoch_output_dict}
+        train_val_logger.append(one_epoch_dict)
         print(
             f"Epoch [{epoch+1}/{config['num_epochs']}] - loss: {train_one_epoch_output_dict['train_loss']:.4f} - val_loss: {eval_one_epoch_output_dict['val_loss']:.4f}"
         )
+    train_val_logger.plot_train_val_loss()
     # Save trained model (optional)
     torch.save(init_output_dict['model'].state_dict(), config['model_path'])
 
@@ -148,6 +153,29 @@ def eval_one_epoch(input_dict):
     output_dict = {'val_loss': val_loss, 'model': input_dict['model']}
     return output_dict
 
+class TrainValLogger(object):
+    """Class for logging losses
+
+    """
+    def __init__(self):
+        super(TrainValLogger, self).__init__()
+        self.train_losses=[]
+        self.val_losses=[]
+    def append(self,logger_input_dict):
+        self.logger_input_dict = logger_input_dict
+        self.train_losses.append(self.logger_input_dict['train_loss'])
+        self.val_losses.append(self.logger_input_dict['val_loss'])
+
+    def plot_train_val_loss(self):
+        epoch_count = range(1, len(self.train_losses) + 1)
+        plt.plot(epoch_count, self.train_losses, label='train_loss')
+        # Plot validation loss
+        plt.plot(epoch_count, self.val_losses, label='val_loss')
+        plt.title('Model Loss')
+        plt.xlabel('Epoch')
+        plt.ylabel('Loss')
+        plt.legend()
+        plt.savefig('output/train_val_loss.pdf')
 
 if __name__ == "__main__":
     main()
