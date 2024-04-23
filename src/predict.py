@@ -27,7 +27,7 @@ def main():
     print(f'predict_input_dict={predict_input_dict}')
     print(f'predict_output_dict={predict_output_dict}')
     batch_y_squeezed= batch_y.reshape((batch_y.shape[0],batch_y.shape[2]))
-    print(f'gt_output_dict={pkl_dict["target_scaler"].inverse_transform(batch_y_squeezed)}')
+    print(f'gt_output_dict={batch_y_squeezed}')
 
 
 def predict(predict_input_dict):

@@ -3,7 +3,7 @@ import torch
 import yaml
 import torch.nn as nn
 import pandas as pd
-from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.metrics import r2_score, mean_squared_error, root_mean_squared_error
 from src.dataloader.dataloader import CustomDataset, load_test_data  # Assuming dataloader.py is in the correct directory
 from torch.utils.data import DataLoader
 from src.models.models import SimpleMlp
@@ -37,14 +37,15 @@ def main():
 
 def compute_metrics_per_batch(input_dict):
     mse=mean_squared_error(input_dict['batch_y'],input_dict['batch_y_pred'])
+    rmse=root_mean_squared_error(input_dict['batch_y'],input_dict['batch_y_pred'])
     r2=r2_score(input_dict['batch_y'],input_dict['batch_y_pred'])
-    return {'mse':mse, 'r2':r2}
+    return {'mse':mse, 'rmse':rmse, 'r2':r2}
 
 
 def eval(input_dict):
     input_dict['model'].eval()
     total_test_loss = 0
-    total_metrics={'mse':0, 'r2':0}
+    total_metrics={'mse':0, 'rmse':0, 'r2':0}
     with torch.no_grad():
         for batch_X, batch_y in input_dict["test_loader"]:
             batch_X = batch_X.reshape((batch_X.shape[0],batch_X.shape[2]))
