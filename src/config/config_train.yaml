@@ -2,6 +2,6 @@ train_table_path: "data/auction+verification/train_data.csv"
 val_table_path: "data/auction+verification/val_data.csv"
 test_table_path: "data/auction+verification/test_data.csv"
 model_path: "output/model.pth"
-num_epochs: 100
+num_epochs: 200
 batch_size: 32
 shuffle: True
