@@ -81,6 +81,23 @@ def load_test_data(config):
     output_dict = {"X_test": X_test, "y_test": y_test, "test_loader": test_loader}
     return output_dict
 
+def load_test_data_batch_size_1(config):
+    # Load data using the custom dataset
+    test_dataset = CustomDataset(
+        {"table_path": config["test_table_path"], "phase": "test"}
+    )
+
+    X_test = test_dataset.X_df.to_numpy()
+    y_test = test_dataset.y_df.to_numpy()
+
+    test_loader = DataLoader(
+        test_dataset, batch_size=1, shuffle=config["shuffle"]
+    )
+
+    output_dict = {"X_test": X_test, "y_test": y_test, "test_loader": test_loader}
+    return output_dict
+
+
 
 if __name__ == "__main__":
     custom_dataset_input_dict = {

@@ -5,7 +5,6 @@ import yaml
 from src.common.loading import load_pickle, load_trained_model
 from src.dataloader.dataloader import load_test_data
 
-
 def main():
     with open("src/config/config.yaml", "r") as f:
         config_common = yaml.safe_load(f)
@@ -40,12 +39,12 @@ def main():
 
 def predict(predict_input_dict):
     with torch.no_grad():
-        batch_X = torch.tensor(predict_input_dict["batch_X"], dtype=torch.float32)
+        batch_X = predict_input_dict["batch_X"]
         batch_X = batch_X.reshape((batch_X.shape[0], batch_X.shape[2]))
         input_tensor = torch.from_numpy(
             predict_input_dict["input_scaler"].transform(batch_X)
         )
-        input_tensor = torch.tensor(input_tensor, dtype=torch.float32)
+        input_tensor = input_tensor.clone().detach().type(torch.float32)
         batch_y_pred = predict_input_dict["model"](input_tensor)
         batch_y_pred_original = predict_input_dict["target_scaler"].inverse_transform(
             batch_y_pred
