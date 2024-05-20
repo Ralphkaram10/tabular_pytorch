@@ -27,7 +27,7 @@ Components:
   * Execute the script by running the main() function.
 
 # Module for Computing Key Performance Indicators (kpi.py):
-*  main() Function:
+* main() Function:
   * Load the test dataset from the specified configuration file.
   * Load a trained machine learning model using the provided model path.
   * Evaluate the model’s performance on the test data.
