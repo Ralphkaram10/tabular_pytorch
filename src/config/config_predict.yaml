@@ -1,5 +1,5 @@
-test_table_path: "data/auction+verification/test_data.csv"
-model_path: "output/model.pth"
+test_table_path: "data/auction+verification/test_data.csv" # path of test dataset (i.e. csv table)
+model_path: "output/model.pth" # path of pretrained model used for inference and evaluation
 batch_size: 16
 shuffle: False
 plot_title: "y_pred_vs_real_test"

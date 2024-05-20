@@ -1,4 +1,4 @@
-input_columns:
+input_columns: # Names of the input columns (features) of the csv files / datasets (used for training, inference and evaluation)
   - process.b1.capacity
   - process.b2.capacity
   - process.b3.capacity
@@ -6,6 +6,6 @@ input_columns:
   - property.price
   - property.product
   - property.winner
-output_columns:
+output_columns: # Names of the output columns (features) of the csv files / datasets (used for training, inference and evaluation)
   - verification.time 
-output_pickle_path: "output/pickle.pkl"
+output_pickle_path: "output/pickle.pkl" # Path of output pickle file

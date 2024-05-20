@@ -1,7 +1,7 @@
-train_table_path: "data/auction+verification/train_data.csv"
-val_table_path: "data/auction+verification/val_data.csv"
-test_table_path: "data/auction+verification/test_data.csv"
-model_path: "output/model.pth"
+train_table_path: "data/auction+verification/train_data.csv" # path of training dataset (i.e. csv table)
+val_table_path: "data/auction+verification/val_data.csv" # path of validation dataset (i.e. csv table)
+test_table_path: "data/auction+verification/test_data.csv" # path of test dataset (i.e. csv table)
+model_path: "output/model.pth" # path where to save the trained model
 num_epochs: 200
 batch_size: 32
 shuffle: True
