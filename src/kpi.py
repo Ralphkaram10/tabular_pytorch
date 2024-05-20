@@ -26,6 +26,7 @@ from src.common.keywords import (
             RMSE_KEY,
             R2_KEY,
             PLOT_TITLE_KEY,
+            OUTPUT_COLUMNS_KEY
             )
 
 
@@ -44,8 +45,12 @@ def main():
     Returns:
         None (The function performs the specified tasks without returning any value.)
     """
-    with open("src/config/config_predict.yaml", "r") as f:
-        config = yaml.safe_load(f)
+    with open("src/config/config.yaml", "r", encoding="utf8") as file:
+        config_common = yaml.safe_load(file)
+    with open("src/config/config_predict.yaml", "r", encoding="utf8") as file:
+        config_predict = yaml.safe_load(file)
+        config = {**config_common, **config_predict}
+
     # load test dataset
     test_data_dict = load_test_data(config)
     # Load trained model
@@ -112,17 +117,24 @@ def plot_ground_truth_vs_prediction(input_dict):
         plot_ground_truth_vs_prediction(input_dict)
     """
     test_data_dict = load_test_data_batch_size_1(input_dict)
-    y_test = test_data_dict[Y_TEST_KEY].squeeze()
+
+    y_test = test_data_dict[Y_TEST_KEY]
     predict_input_dict = {
         **input_dict, BATCH_X_KEY: np.expand_dims(test_data_dict[X_TEST_KEY], axis=1)}
     predict_output_dict = predict(predict_input_dict)
-    y_pred = predict_output_dict[BATCH_Y_PRED_KEY].squeeze()
-    plt.scatter(y_test, y_pred, color="blue")
-    plot_title = input_dict[PLOT_TITLE_KEY]
-    plt.title(plot_title)
-    plt.xlabel("y_real")
-    plt.ylabel("y_pred")
-    plt.savefig(f"output/{plot_title}.pdf")
+    y_pred = predict_output_dict[BATCH_Y_PRED_KEY]
+    # plot y_pred vs y_real for each output feature
+    for i in range(y_test.shape[1]):
+        y_test_feature=y_test[:,i]
+        y_pred_feature=y_pred[:,i]
+        plt.scatter(y_test_feature, y_pred_feature, color="blue")
+        plot_title = input_dict[PLOT_TITLE_KEY]
+        plot_title+=f" {input_dict[OUTPUT_COLUMNS_KEY][i]}"
+        plt.title(plot_title)
+        plt.xlabel("y_real")
+        plt.ylabel("y_pred")
+        plt.savefig(f"output/{plot_title}.pdf")
+        plt.close()
 
 
 def evaluate(input_dict):
