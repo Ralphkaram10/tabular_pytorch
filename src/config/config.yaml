@@ -1,0 +1,11 @@
+input_columns:
+  - process.b1.capacity
+  - process.b2.capacity
+  - process.b3.capacity
+  - process.b4.capacity
+  - property.price
+  - property.product
+  - property.winner
+output_columns:
+  - verification.time 
+output_pickle_path: "output/pickle.pkl"
