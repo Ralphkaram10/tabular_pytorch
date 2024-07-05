@@ -4,7 +4,7 @@
 This repository is used to train and evaluate deep learning models for tabular data regression.  
 
 >**How to Use**:
->  * Install the necessary python dependencies (found in requirements.txt) preferably in a venv or conda environment.
+>  * Install the necessary python dependencies (found in requirements.txt) preferably in a venv or conda environment or using a docker container using the command "docker compose run --rm tabular_pytorch_app".
 >  * The needed configuration files needed to for this repository are located at src/config. Update them when needed.
 >  * Use train.py to train the model 
 >  * Use kpi.py to evaluate the model
