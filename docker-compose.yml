@@ -1,0 +1,11 @@
+version: "2.27.0"
+services:
+  tabular_pytorch_app:
+    build: .
+    image: tabular_pytorch_image
+    volumes:
+      - ./output:/home/app_user/output
+    ports:
+      - "8000:8000"
+    stdin_open: true
+    tty: true
