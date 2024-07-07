@@ -46,4 +46,5 @@ LOAD_TRAINED_MODEL_OUTPUT_DICT_KEY= "load_trained_model_output_dict"
 PKL_DICT_KEY = "pkl_dict"
 PREDICT_INPUT_DICT_KEY = "predict_input_dict"
 PREDICT_OUTPUT_DICT_KEY = "predict_output_dict"
+INPUT_COLUMNS_KEY = "input_columns"
 

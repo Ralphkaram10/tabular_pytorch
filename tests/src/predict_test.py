@@ -12,11 +12,14 @@ from src.common.keywords import (
             X_TEST_KEY,
             Y_TEST_KEY,
             BATCH_X_KEY,
+            BATCH_SIZE_KEY,
             INPUT_SCALER_KEY,
             MODEL_KEY,
             TARGET_SCALER_KEY,
             BATCH_Y_PRED_KEY,
-            TEST_LOADER_KEY
+            TEST_LOADER_KEY,
+            CONFIG_KEY,
+            INPUT_COLUMNS_KEY
     )
 
 @pytest.fixture
@@ -25,6 +28,10 @@ def predict_main():
     return main_output_dict
 
 def test_predict_input_content(predict_main):
-    predict_input_dict = predict_main[PREDICT_INPUT_DICT_KEY]
-    assert set(predict_input_dict.keys())==set([BATCH_X_KEY,INPUT_SCALER_KEY,MODEL_KEY,TARGET_SCALER_KEY])
+    assert set(predict_main[PREDICT_INPUT_DICT_KEY].keys())==set([BATCH_X_KEY,INPUT_SCALER_KEY,MODEL_KEY,TARGET_SCALER_KEY])
+    assert predict_main[PREDICT_INPUT_DICT_KEY][BATCH_X_KEY].shape==(
+            predict_main[CONFIG_KEY][BATCH_SIZE_KEY],
+            1,
+            len(predict_main[CONFIG_KEY][INPUT_COLUMNS_KEY])
+            )
 
