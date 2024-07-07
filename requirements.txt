@@ -6,3 +6,4 @@ tqdm
 pillow
 pyyaml
 matplotlib
+pytest

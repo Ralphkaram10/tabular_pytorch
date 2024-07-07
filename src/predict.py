@@ -1,8 +1,4 @@
 """ Module to provide inference function """
-import numpy as np
-import torch
-import yaml
-
 from src.common.loading import load_pickle, load_trained_model
 from src.dataloader.dataloader import load_test_data
 from src.common.keywords import (
@@ -16,8 +12,20 @@ from src.common.keywords import (
             TARGET_SCALER_KEY,
             INPUT_SCALER_KEY,
             BATCH_Y_PRED_KEY,
-            TEST_LOADER_KEY
+            TEST_LOADER_KEY,
+            CONFIG_KEY,
+            TEST_DATA_DICT_KEY,
+            LOAD_TRAINED_MODEL_INPUT_DICT_KEY,
+            LOAD_TRAINED_MODEL_OUTPUT_DICT_KEY,
+            PKL_DICT_KEY,
+            PREDICT_INPUT_DICT_KEY,
+            PREDICT_OUTPUT_DICT_KEY,
             )
+import numpy as np
+import torch
+import yaml
+
+
 
 def main():
     """
@@ -28,9 +36,6 @@ def main():
     4. Retrieves an example batch from the test dataset.
     5. Makes predictions using the loaded model.
     6. Prints relevant information for debugging purposes.
-
-    Returns:
-        None
     """
     with open("src/config/config.yaml", "r", encoding="utf8") as file:
         config_common = yaml.safe_load(file)
@@ -61,6 +66,17 @@ def main():
     print(f"predict_output_dict={predict_output_dict[BATCH_Y_PRED_KEY]}")
     batch_y_squeezed = batch_y.reshape((batch_y.shape[0], batch_y.shape[2])).numpy()
     print(f"gt_output_dict={batch_y_squeezed}")
+    # the return value is for testing purposes
+    main_output_dict={
+        CONFIG_KEY :  config,
+        TEST_DATA_DICT_KEY : test_data_dict,
+        LOAD_TRAINED_MODEL_INPUT_DICT_KEY: load_trained_model_input_dict,
+        LOAD_TRAINED_MODEL_OUTPUT_DICT_KEY: load_trained_model_output_dict,
+        PKL_DICT_KEY : pkl_dict,
+        PREDICT_INPUT_DICT_KEY : predict_input_dict,
+        PREDICT_OUTPUT_DICT_KEY : predict_output_dict,
+    }
+    return main_output_dict
 
 
 def predict(predict_input_dict):
