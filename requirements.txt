@@ -1,9 +1,0 @@
-numpy
-pandas
-torch
-scikit-learn
-tqdm
-pillow
-pyyaml
-matplotlib
-pytest
