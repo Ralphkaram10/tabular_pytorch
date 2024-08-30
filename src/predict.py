@@ -1,4 +1,5 @@
 """ Module to provide inference function """
+from src.common.utils import get_abs_path
 from src.common.loading import load_pickle, load_trained_model
 from src.dataloader.dataloader import load_test_data
 from src.common.keywords import (
@@ -24,8 +25,7 @@ from src.common.keywords import (
 import numpy as np
 import torch
 import yaml
-
-
+import os
 
 def main():
     """
@@ -37,9 +37,12 @@ def main():
     5. Makes predictions using the loaded model.
     6. Prints relevant information for debugging purposes.
     """
-    with open("src/config/config.yaml", "r", encoding="utf8") as file:
+    config_dir_path=get_abs_path("src/config")
+    config_path=os.path.join(config_dir_path,"config.yaml")
+    config_predict_path=os.path.join(config_dir_path,"config_predict.yaml")
+    with open(config_path, "r", encoding="utf8") as file:
         config_common = yaml.safe_load(file)
-    with open("src/config/config_predict.yaml", "r", encoding="utf8") as file:
+    with open(config_predict_path, "r", encoding="utf8") as file:
         config_predict = yaml.safe_load(file)
         config = {**config_common, **config_predict}
     # load test dataset

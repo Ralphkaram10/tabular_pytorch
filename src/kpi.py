@@ -1,4 +1,5 @@
 """ Module to compute key performance indicators """
+from matplotlib.artist import get
 import torch
 import yaml
 import numpy as np
@@ -8,6 +9,7 @@ from matplotlib import pyplot as plt
 # Assuming dataloader.py is in the correct directory
 from src.dataloader.dataloader import load_test_data, load_test_data_batch_size_1
 from src.common.loading import load_trained_model, load_pickle
+from src.common.utils import get_abs_path
 from src.predict import predict
 from src.common.keywords import (
             BATCH_Y_KEY,
@@ -45,9 +47,11 @@ def main():
     Returns:
         None (The function performs the specified tasks without returning any value.)
     """
-    with open("src/config/config.yaml", "r", encoding="utf8") as file:
+    config_path=get_abs_path("src/config/config.yaml")
+    with open(config_path, "r", encoding="utf8") as file:
         config_common = yaml.safe_load(file)
-    with open("src/config/config_predict.yaml", "r", encoding="utf8") as file:
+    config_predict_path=get_abs_path("src/config/config_predict.yaml")
+    with open(config_predict_path, "r", encoding="utf8") as file:
         config_predict = yaml.safe_load(file)
         config = {**config_common, **config_predict}
 
@@ -133,7 +137,8 @@ def plot_ground_truth_vs_prediction(input_dict):
         plt.title(plot_title)
         plt.xlabel("y_real")
         plt.ylabel("y_pred")
-        plt.savefig(f"output/{plot_title}.pdf")
+        plot_path=get_abs_path(f"output/{plot_title}.pdf")
+        plt.savefig(plot_path)
         plt.close()
 
 

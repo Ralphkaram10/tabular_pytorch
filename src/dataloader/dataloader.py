@@ -1,20 +1,22 @@
 """Module providing pytorch Dataset for regression/classification in tabular datasets."""
+import os
 import yaml
 import pickle
 import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import MinMaxScaler
-
+from src.common.utils import get_abs_path
 
 class CustomDataset(Dataset):
     """Class representing pytorch Dataset for table regression/classification"""
 
     def __init__(self, custom_dataset_input_dict):
         self.custom_dataset_input_dict = custom_dataset_input_dict
-        with open("src/config/config.yaml", "r") as f:
+        config_path=get_abs_path("src/config/config.yaml")
+        with open(config_path, "r") as f:
             self.config = yaml.safe_load(f)
-        df = pd.read_csv(custom_dataset_input_dict["table_path"], sep=";")
+        df = pd.read_csv(get_abs_path(custom_dataset_input_dict["table_path"]), sep=";")
         self.X_df = df[self.config["input_columns"]]
         self.y_df = df[self.config["output_columns"]]
         self.X = self.X_df.to_numpy(dtype=np.float32)
@@ -38,11 +40,13 @@ class CustomDataset(Dataset):
             "input_scaler": self.input_scaler,
             "target_scaler": self.target_scaler,
         }
-        with open(self.config["output_pickle_path"], "wb") as pkl_file:
+        output_pickle_path=get_abs_path(self.config["output_pickle_path"])
+        with open(output_pickle_path, "wb") as pkl_file:
             pickle.dump(pkl_dict, pkl_file)
 
     def load_pickle(self):
-        with open(self.config["output_pickle_path"], "rb") as pkl_file:
+        output_pickle_path=get_abs_path(self.config["output_pickle_path"])
+        with open(output_pickle_path, "rb") as pkl_file:
             pkl_dict = pickle.load(pkl_file)
             self.input_scaler = pkl_dict["input_scaler"]
             self.target_scaler = pkl_dict["target_scaler"]

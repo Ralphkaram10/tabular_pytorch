@@ -12,6 +12,7 @@ dependencies = [
 "pyyaml",
 "matplotlib",
 "pytest",
+"debugpy"
 ]
 [build-system]
 requires = ["setuptools"]

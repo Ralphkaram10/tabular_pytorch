@@ -1,3 +1,4 @@
+from matplotlib.artist import get
 import torch
 import yaml
 import numpy as np
@@ -9,6 +10,7 @@ from torch.utils.data import DataLoader
 from sklearn.model_selection import train_test_split
 from src.dataloader.dataloader import CustomDataset
 from src.models.models import SimpleMlp
+from src.common.utils import get_abs_path
 from src.common.keywords import (
             BATCH_SIZE_KEY,
             BATCH_Y_KEY,
@@ -63,7 +65,8 @@ def main():
 
     Reads configuration from 'config_train.yaml' and trains the model accordingly.
     """
-    with open("src/config/config_train.yaml", "r") as f:
+    config_train_path=get_abs_path("src/config/config_train.yaml")
+    with open(config_train_path, "r") as f:
         config = yaml.safe_load(f)
     train_model(config)
 
@@ -108,7 +111,8 @@ def train_model(config):
         )
     train_val_logger.plot_train_val_loss()
     # Save trained model (optional)
-    torch.save(init_output_dict[MODEL_KEY].state_dict(), config[MODEL_PATH_KEY])
+    model_path=get_abs_path(config[MODEL_PATH_KEY])
+    torch.save(init_output_dict[MODEL_KEY].state_dict(),model_path)
 
 
 def init(init_input_dict):
@@ -312,8 +316,9 @@ class TrainValLogger(object):
         plt.title("Model Loss")
         plt.xlabel("Epoch")
         plt.ylabel("Loss")
-        plt.legend()
-        plt.savefig("output/train_val_loss.pdf")
+        plt.legend() 
+        train_val_loss_path=get_abs_path("output/train_val_loss.pdf")
+        plt.savefig(train_val_loss_path)
 
 
 if __name__ == "__main__":
