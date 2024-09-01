@@ -77,6 +77,7 @@ def main():
     print(evaluate_output_dict)
     # plot ground truth vs prediction
     plot_ground_truth_vs_prediction({**evaluate_input_dict, **config})
+    return evaluate_output_dict
 
 
 def compute_metrics_per_batch(input_dict):
