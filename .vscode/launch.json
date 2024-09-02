@@ -1,0 +1,12 @@
+{
+    "configurations": [
+      {
+	"name": "Python: strating from repo root",
+	"type": "python",
+	"request": "launch",
+	"program": "${file}",
+	"console": "integratedTerminal",
+	"cwd": "${workspaceFolder}/."
+      }
+    ]
+}
